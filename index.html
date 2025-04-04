@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Car Simulator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body id="car-body">
+    <div class="container">
+        <h1>Manual Car Simulator</h1>
+        
+        <div class="dashboard">
+            <div class="gauges">
+                <div class="gauge speedometer">
+                    <div class="gauge-face">
+                        <div class="gauge-markings" id="speed-markings"></div>
+                        <div class="gauge-needle" id="speed-needle"></div>
+                        <div class="gauge-center"></div>
+                        <div class="gauge-value-display" id="speed-value">0</div>
+                        <div class="gauge-label">Speed</div>
+                        <div class="gauge-unit" id="speed-unit">MPH</div>
+                    </div>
+                </div>
+                
+                <div class="gauge tachometer">
+                    <div class="gauge-face">
+                        <div class="gauge-markings" id="rpm-markings"></div>
+                        <div class="gauge-needle" id="rpm-needle"></div>
+                        <div class="gauge-center"></div>
+                        <div class="gauge-value-display" id="rpm-value">0</div>
+                        <div class="gauge-label">RPM</div>
+                        <div class="gauge-unit">x1000</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="status-indicators">
+                <div class="indicator" id="engine-indicator">
+                    <div class="indicator-label">ENGINE</div>
+                    <div class="indicator-value" id="engine-status">OFF</div>
+                </div>
+                <div class="indicator" id="gear-indicator">
+                    <div class="indicator-label">GEAR</div>
+                    <div class="indicator-value" id="gear-status">N</div>
+                </div>
+                <div class="indicator" id="clutch-indicator">
+                    <div class="indicator-label">CLUTCH</div>
+                    <div class="indicator-value" id="clutch-status">OUT</div>
+                </div>
+                <div class="indicator" id="handbrake-indicator">
+                    <div class="indicator-label">HANDBRAKE</div>
+                    <div class="indicator-value" id="handbrake-status">ON</div>
+                </div>
+            </div>
+            
+            <div id="message" class="message"></div>
+        </div>
+        
+        <div class="car-interior">
+            <div class="windshield">
+                <div class="road">
+                    <div id="road-line" class="road-line"></div>
+                </div>
+            </div>
+            
+            <div class="dashboard-controls">
+                <button id="start-engine" class="start-button">START<br><span class="key-hint">S</span></button>
+                
+                <div class="gear-container">
+                    <div class="neutral-zone"></div>
+                    <div class="gear-slot" style="grid-column: 1; grid-row: 1;">1</div>
+                    <div class="gear-slot" style="grid-column: 1; grid-row: 2;">2</div>
+                    <div class="gear-slot" style="grid-column: 2; grid-row: 1;">3</div>
+                    <div class="gear-slot" style="grid-column: 2; grid-row: 2;">4</div>
+                    <div class="gear-slot" style="grid-column: 3; grid-row: 1;">5</div>
+                    <div class="gear-slot" style="grid-column: 3; grid-row: 2;">R</div>
+                    <div id="gear-stick" class="gear-stick"></div>
+                </div>
+                
+                <div class="handbrake" id="handbrake">
+                    <div class="handbrake-handle"></div>
+                    <div class="handbrake-label">HANDBRAKE<br><span class="key-hint">V</span></div>
+                </div>
+            </div>
+            
+            <div class="controls-area">
+                <div class="pedals">
+                    <div id="clutch" class="pedal">
+                        <div class="pedal-icon">⊙</div>
+                        <div class="pedal-label">CLUTCH<br><span class="key-hint">Z</span></div>
+                    </div>
+                    <div id="brake" class="pedal">
+                        <div class="pedal-icon">■</div>
+                        <div class="pedal-label">BRAKE<br><span class="key-hint">X</span></div>
+                    </div>
+                    <div id="accelerate" class="pedal">
+                        <div class="pedal-icon">▲</div>
+                        <div class="pedal-label">GAS<br><span class="key-hint">C</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mobile-controls">
+                <button id="mobile-clutch" class="mobile-button">CLUTCH</button>
+                <button id="mobile-brake" class="mobile-button">BRAKE</button>
+                <button id="mobile-gas" class="mobile-button">GAS</button>
+            </div>
+        </div>
+        
+        <div class="settings-panel">
+            <h3>Settings</h3>
+            <div class="settings">
+                <div class="toggle-container">
+                    <span>Screen Shake</span>
+                    <label class="toggle">
+                        <input type="checkbox" id="shake-toggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-container">
+                    <span>Sound Effects</span>
+                    <label class="toggle">
+                        <input type="checkbox" id="sound-toggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-container">
+                    <span>Units</span>
+                    <label class="toggle">
+                        <input type="checkbox" id="unit-toggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span id="unit-label">MPH</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
