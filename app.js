@@ -155,62 +155,68 @@ const activeTouches = {}
 
 // Initialize gauge markings
 function initializeGauges() {
-  // Clear existing markings first in case this function is called multiple times
+  // Get the gauge elements
+  const speedGauge = document.querySelector(".speedometer .gauge-face")
+  const rpmGauge = document.querySelector(".tachometer .gauge-face")
+
+  if (!speedGauge || !rpmGauge) return
+
+  // Clear existing markings
   const speedMarkings = document.getElementById("speed-markings")
   const rpmMarkings = document.getElementById("rpm-markings")
 
   if (speedMarkings) speedMarkings.innerHTML = ""
   if (rpmMarkings) rpmMarkings.innerHTML = ""
 
-  // Create speedometer markings
-  for (let i = 0; i <= 12; i++) {
-    // Create marking line
+  // Create speedometer markings (0-120 mph/kph)
+  createGaugeMarkings(speedMarkings, 0, 120, 20, 10)
+
+  // Create tachometer markings (0-8 x1000 rpm)
+  createGaugeMarkings(rpmMarkings, 0, 8, 2, 1)
+}
+
+// Helper function to create gauge markings
+function createGaugeMarkings(container, min, max, step, labelStep) {
+  if (!container) return
+
+  // Calculate the angle range (240 degrees from -120 to +120)
+  const startAngle = -120
+  const endAngle = 120
+  const totalAngle = endAngle - startAngle
+
+  // Calculate the value range
+  const valueRange = max - min
+
+  // Create markings
+  for (let value = min; value <= max; value += step) {
+    // Calculate the angle for this value
+    const angle = startAngle + ((value - min) / valueRange) * totalAngle
+
+    // Create the marking line
     const marking = document.createElement("div")
-    marking.className = i % 2 === 0 ? "gauge-marking major" : "gauge-marking"
-    marking.style.transform = `rotate(${i * 20 - 120}deg)`
-    speedMarkings.appendChild(marking)
+    marking.className = value % labelStep === 0 ? "gauge-marking major" : "gauge-marking"
+    marking.style.transform = `rotate(${angle}deg)`
+    container.appendChild(marking)
 
-    // Create value label for major markings
-    if (i % 2 === 0) {
-      const value = document.createElement("div")
-      value.className = "gauge-value"
-      value.textContent = i * 10
+    // Add label for major markings
+    if (value % labelStep === 0) {
+      const label = document.createElement("div")
+      label.className = "gauge-label-value"
+      label.textContent = value
 
-      // Position the value using fixed positions based on the angle
-      const angle = ((i * 20 - 120) * Math.PI) / 180
-      value.style.transform = `rotate(${120 - i * 20}deg) translate(0, -32px) rotate(${i * 20 - 120}deg)`
-      value.style.transformOrigin = "center center"
-      value.style.position = "absolute"
-      value.style.top = "50%"
-      value.style.left = "50%"
+      // Position the label using trigonometry
+      const labelAngleRad = (angle * Math.PI) / 180
+      const labelDistance = 75 // Distance from center as percentage of radius
 
-      speedMarkings.appendChild(value)
-    }
-  }
+      // Calculate position
+      const x = 50 + labelDistance * Math.cos(labelAngleRad)
+      const y = 50 + labelDistance * Math.sin(labelAngleRad)
 
-  // Create tachometer markings
-  for (let i = 0; i <= 8; i++) {
-    // Create marking line
-    const marking = document.createElement("div")
-    marking.className = i % 2 === 0 ? "gauge-marking major" : "gauge-marking"
-    marking.style.transform = `rotate(${i * 30 - 120}deg)`
-    rpmMarkings.appendChild(marking)
+      // Set position
+      label.style.left = `${x}%`
+      label.style.top = `${y}%`
 
-    // Create value label for major markings
-    if (i % 2 === 0) {
-      const value = document.createElement("div")
-      value.className = "gauge-value"
-      value.textContent = i
-
-      // Position the value using fixed positions based on the angle
-      const angle = ((i * 30 - 120) * Math.PI) / 180
-      value.style.transform = `rotate(${120 - i * 30}deg) translate(0, -32px) rotate(${i * 30 - 120}deg)`
-      value.style.transformOrigin = "center center"
-      value.style.position = "absolute"
-      value.style.top = "50%"
-      value.style.left = "50%"
-
-      rpmMarkings.appendChild(value)
+      container.appendChild(label)
     }
   }
 }
@@ -1000,3 +1006,4 @@ updateGearPositions()
 
 // Initial display update
 updateDisplay()
+

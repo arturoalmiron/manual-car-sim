@@ -73,6 +73,7 @@ h1 {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .gauge-markings {
@@ -88,7 +89,7 @@ h1 {
   width: 2px;
   height: 10px;
   background: white;
-  top: 5%;
+  top: 10%;
   left: 50%;
   transform-origin: bottom center;
 }
@@ -98,12 +99,13 @@ h1 {
   width: 3px;
 }
 
-.gauge-value {
+.gauge-label-value {
   position: absolute;
   color: white;
   font-size: 12px;
-  transform-origin: center;
   font-weight: bold;
+  transform: translate(-50%, -50%);
+  z-index: 5;
 }
 
 .gauge-needle {
@@ -546,6 +548,18 @@ input:checked + .toggle-slider:before {
     height: 55px;
   }
 
+  .gauge-label-value {
+    font-size: 10px;
+  }
+
+  .gauge-marking.major {
+    height: 12px;
+  }
+
+  .gauge-marking {
+    height: 8px;
+  }
+
   .mobile-controls {
     display: flex;
     justify-content: center;
@@ -596,11 +610,24 @@ input:checked + .toggle-slider:before {
   .gauge {
     width: 110px;
     height: 110px;
-    margin: 0 5px;
   }
 
   .gauge-needle {
     height: 45px;
+  }
+
+  .gauge-label-value {
+    font-size: 8px;
+  }
+
+  .gauge-marking.major {
+    height: 10px;
+    width: 2px;
+  }
+
+  .gauge-marking {
+    height: 6px;
+    width: 1px;
   }
 
   .gauge-value-display {
@@ -616,21 +643,6 @@ input:checked + .toggle-slider:before {
   .gauge-unit {
     bottom: 10px;
     font-size: 9px;
-  }
-
-  .gauge-value {
-    font-size: 8px;
-  }
-
-  .gauge-marking.major {
-    height: 10px;
-    width: 2px;
-  }
-
-  .gauge-marking {
-    height: 6px;
-    width: 1px;
-    top: 8%;
   }
 
   .status-indicators {
