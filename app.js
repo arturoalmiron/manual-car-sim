@@ -151,8 +151,23 @@ gearShiftSound.src =
 
 // Initialize gauge markings
 function initializeGauges() {
-  // Create speedometer markings
+  // Clear existing markings first in case this function is called multiple times
   const speedMarkings = document.getElementById("speed-markings")
+  const rpmMarkings = document.getElementById("rpm-markings")
+
+  if (speedMarkings) speedMarkings.innerHTML = ""
+  if (rpmMarkings) rpmMarkings.innerHTML = ""
+
+  // Get the actual gauge sizes
+  const speedGauge = document.querySelector(".speedometer")
+  const rpmGauge = document.querySelector(".tachometer")
+
+  if (!speedGauge || !rpmGauge) return
+
+  const speedGaugeSize = speedGauge.offsetWidth
+  const rpmGaugeSize = rpmGauge.offsetWidth
+
+  // Create speedometer markings
   for (let i = 0; i <= 12; i++) {
     // Create marking line
     const marking = document.createElement("div")
@@ -167,7 +182,7 @@ function initializeGauges() {
       value.textContent = i * 10
       // Position the value
       const angle = ((i * 20 - 120) * Math.PI) / 180
-      const radius = 75
+      const radius = speedGaugeSize * 0.38 // Adjust radius based on gauge size
       const x = Math.cos(angle) * radius
       const y = Math.sin(angle) * radius
       value.style.left = `calc(50% + ${x}px)`
@@ -178,7 +193,6 @@ function initializeGauges() {
   }
 
   // Create tachometer markings
-  const rpmMarkings = document.getElementById("rpm-markings")
   for (let i = 0; i <= 8; i++) {
     // Create marking line
     const marking = document.createElement("div")
@@ -193,7 +207,7 @@ function initializeGauges() {
       value.textContent = i
       // Position the value
       const angle = ((i * 30 - 120) * Math.PI) / 180
-      const radius = 75
+      const radius = rpmGaugeSize * 0.38 // Adjust radius based on gauge size
       const x = Math.cos(angle) * radius
       const y = Math.sin(angle) * radius
       value.style.left = `calc(50% + ${x}px)`
@@ -206,6 +220,14 @@ function initializeGauges() {
 
 // Initialize gauge markings
 initializeGauges()
+
+// Add a resize event listener to reinitialize gauges when window size changes
+window.addEventListener("resize", () => {
+  // Small delay to ensure DOM has updated
+  setTimeout(() => {
+    initializeGauges()
+  }, 100)
+})
 
 // Initialize gear stick position
 moveGearStick("Neutral")

@@ -88,7 +88,7 @@ h1 {
   width: 2px;
   height: 10px;
   background: white;
-  top: 10px;
+  top: 5%;
   left: 50%;
   transform-origin: bottom center;
 }
@@ -619,15 +619,18 @@ input:checked + .toggle-slider:before {
   }
 
   .gauge-value {
-    font-size: 9px;
+    font-size: 8px;
   }
 
   .gauge-marking.major {
     height: 10px;
+    width: 2px;
   }
 
   .gauge-marking {
     height: 6px;
+    width: 1px;
+    top: 8%;
   }
 
   .status-indicators {
