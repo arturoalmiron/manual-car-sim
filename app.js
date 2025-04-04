@@ -374,41 +374,183 @@ clutchEl.addEventListener("mouseup", () => {
   updateDisplay()
 })
 
-// Touch events for clutch
+// Add multi-touch support by tracking active touches
+const activeTouches = {}
+
+// Modify the touch event handlers for pedals to support multi-touch
+// Replace the existing touch event handlers for clutch
 clutchEl.addEventListener("touchstart", (e) => {
   e.preventDefault()
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const touch = e.changedTouches[i]
+    activeTouches[touch.identifier] = "clutch"
+  }
   clutchPressed = true
   updateDisplay()
 })
 
 clutchEl.addEventListener("touchend", (e) => {
   e.preventDefault()
-  clutchPressed = false
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const touch = e.changedTouches[i]
+    if (activeTouches[touch.identifier] === "clutch") {
+      delete activeTouches[touch.identifier]
+    }
+  }
 
-  // Check for stall conditions when releasing clutch
-  if (engineOn && !stalled && gear !== "Neutral" && rpm < stallRpm && !accelerating) {
-    stalled = true
-    showMessage("Engine stalled! Press clutch and restart", 0)
+  // Only release clutch if no touches are still on the clutch
+  if (!Object.values(activeTouches).includes("clutch")) {
+    clutchPressed = false
+
+    // Check for stall conditions when releasing clutch
+    if (engineOn && !stalled && gear !== "Neutral" && rpm < stallRpm && !accelerating) {
+      stalled = true
+      showMessage("Engine stalled! Press clutch and restart", 0)
+    }
   }
 
   updateDisplay()
 })
 
-// Mobile clutch button
+// Replace the existing touch event handlers for accelerator
+accelerateEl.addEventListener("touchstart", (e) => {
+  e.preventDefault()
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const touch = e.changedTouches[i]
+    activeTouches[touch.identifier] = "accelerate"
+  }
+  accelerating = true
+  updateDisplay()
+})
+
+accelerateEl.addEventListener("touchend", (e) => {
+  e.preventDefault()
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const touch = e.changedTouches[i]
+    if (activeTouches[touch.identifier] === "accelerate") {
+      delete activeTouches[touch.identifier]
+    }
+  }
+
+  // Only release accelerator if no touches are still on it
+  if (!Object.values(activeTouches).includes("accelerate")) {
+    accelerating = false
+  }
+
+  updateDisplay()
+})
+
+// Replace the existing touch event handlers for brake
+brakeEl.addEventListener("touchstart", (e) => {
+  e.preventDefault()
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const touch = e.changedTouches[i]
+    activeTouches[touch.identifier] = "brake"
+  }
+  braking = true
+  updateDisplay()
+})
+
+brakeEl.addEventListener("touchend", (e) => {
+  e.preventDefault()
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const touch = e.changedTouches[i]
+    if (activeTouches[touch.identifier] === "brake") {
+      delete activeTouches[touch.identifier]
+    }
+  }
+
+  // Only release brake if no touches are still on it
+  if (!Object.values(activeTouches).includes("brake")) {
+    braking = false
+  }
+
+  updateDisplay()
+})
+
+// Update mobile button handlers for multi-touch
 mobileClutchEl.addEventListener("touchstart", (e) => {
   e.preventDefault()
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const touch = e.changedTouches[i]
+    activeTouches[touch.identifier] = "mobile-clutch"
+  }
   clutchPressed = true
   updateDisplay()
 })
 
 mobileClutchEl.addEventListener("touchend", (e) => {
   e.preventDefault()
-  clutchPressed = false
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const touch = e.changedTouches[i]
+    if (activeTouches[touch.identifier] === "mobile-clutch") {
+      delete activeTouches[touch.identifier]
+    }
+  }
 
-  // Check for stall conditions when releasing clutch
-  if (engineOn && !stalled && gear !== "Neutral" && rpm < stallRpm && !accelerating) {
-    stalled = true
-    showMessage("Engine stalled! Press clutch and restart", 0)
+  // Only release clutch if no touches are still on the mobile clutch button
+  if (!Object.values(activeTouches).includes("mobile-clutch") && !Object.values(activeTouches).includes("clutch")) {
+    clutchPressed = false
+
+    // Check for stall conditions when releasing clutch
+    if (engineOn && !stalled && gear !== "Neutral" && rpm < stallRpm && !accelerating) {
+      stalled = true
+      showMessage("Engine stalled! Press clutch and restart", 0)
+    }
+  }
+
+  updateDisplay()
+})
+
+mobileGasEl.addEventListener("touchstart", (e) => {
+  e.preventDefault()
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const touch = e.changedTouches[i]
+    activeTouches[touch.identifier] = "mobile-gas"
+  }
+  accelerating = true
+  updateDisplay()
+})
+
+mobileGasEl.addEventListener("touchend", (e) => {
+  e.preventDefault()
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const touch = e.changedTouches[i]
+    if (activeTouches[touch.identifier] === "mobile-gas") {
+      delete activeTouches[touch.identifier]
+    }
+  }
+
+  // Only release accelerator if no touches are still on the mobile gas button
+  if (!Object.values(activeTouches).includes("mobile-gas") && !Object.values(activeTouches).includes("accelerate")) {
+    accelerating = false
+  }
+
+  updateDisplay()
+})
+
+mobileBrakeEl.addEventListener("touchstart", (e) => {
+  e.preventDefault()
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const touch = e.changedTouches[i]
+    activeTouches[touch.identifier] = "mobile-brake"
+  }
+  braking = true
+  updateDisplay()
+})
+
+mobileBrakeEl.addEventListener("touchend", (e) => {
+  e.preventDefault()
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const touch = e.changedTouches[i]
+    if (activeTouches[touch.identifier] === "mobile-brake") {
+      delete activeTouches[touch.identifier]
+    }
+  }
+
+  // Only release brake if no touches are still on the mobile brake button
+  if (!Object.values(activeTouches).includes("mobile-brake") && !Object.values(activeTouches).includes("brake")) {
+    braking = false
   }
 
   updateDisplay()
@@ -438,30 +580,30 @@ accelerateEl.addEventListener("mouseup", () => {
 })
 
 // Touch events for accelerator
-accelerateEl.addEventListener("touchstart", (e) => {
-  e.preventDefault()
-  accelerating = true
-  updateDisplay()
-})
-
-accelerateEl.addEventListener("touchend", (e) => {
-  e.preventDefault()
-  accelerating = false
-  updateDisplay()
-})
+//accelerateEl.addEventListener("touchstart", (e) => {
+//  e.preventDefault()
+//  accelerating = true
+//  updateDisplay()
+//})
+//
+//accelerateEl.addEventListener("touchend", (e) => {
+//  e.preventDefault()
+//  accelerating = false
+//  updateDisplay()
+//})
 
 // Mobile gas button
-mobileGasEl.addEventListener("touchstart", (e) => {
-  e.preventDefault()
-  accelerating = true
-  updateDisplay()
-})
-
-mobileGasEl.addEventListener("touchend", (e) => {
-  e.preventDefault()
-  accelerating = false
-  updateDisplay()
-})
+//mobileGasEl.addEventListener("touchstart", (e) => {
+//  e.preventDefault()
+//  accelerating = true
+//  updateDisplay()
+//})
+//
+//mobileGasEl.addEventListener("touchend", (e) => {
+//  e.preventDefault()
+//  accelerating = false
+//  updateDisplay()
+//})
 
 // Brake control
 brakeEl.addEventListener("mousedown", () => {
@@ -475,30 +617,30 @@ brakeEl.addEventListener("mouseup", () => {
 })
 
 // Touch events for brake
-brakeEl.addEventListener("touchstart", (e) => {
-  e.preventDefault()
-  braking = true
-  updateDisplay()
-})
-
-brakeEl.addEventListener("touchend", (e) => {
-  e.preventDefault()
-  braking = false
-  updateDisplay()
-})
+//brakeEl.addEventListener("touchstart", (e) => {
+//  e.preventDefault()
+//  braking = true
+//  updateDisplay()
+//})
+//
+//brakeEl.addEventListener("touchend", (e) => {
+//  e.preventDefault()
+//  braking = false
+//  updateDisplay()
+//})
 
 // Mobile brake button
-mobileBrakeEl.addEventListener("touchstart", (e) => {
-  e.preventDefault()
-  braking = true
-  updateDisplay()
-})
-
-mobileBrakeEl.addEventListener("touchend", (e) => {
-  e.preventDefault()
-  braking = false
-  updateDisplay()
-})
+//mobileBrakeEl.addEventListener("touchstart", (e) => {
+//  e.preventDefault()
+//  braking = true
+//  updateDisplay()
+//})
+//
+//mobileBrakeEl.addEventListener("touchend", (e) => {
+//  e.preventDefault()
+//  braking = false
+//  updateDisplay()
+//})
 
 // Gear stick drag functionality
 let isDragging = false
@@ -588,80 +730,95 @@ document.addEventListener("mousemove", (event) => {
 gearStickEl.addEventListener("touchstart", (e) => {
   if (clutchPressed || gear === "Neutral") {
     isDragging = true
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      const touch = e.changedTouches[i]
+      activeTouches[touch.identifier] = "gear-stick"
+    }
     e.preventDefault() // Prevent scrolling
   } else {
     showMessage("Press the clutch to change gears")
   }
 })
 
-document.addEventListener("touchend", () => {
-  isDragging = false
+document.addEventListener("touchend", (e) => {
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const touch = e.changedTouches[i]
+    if (activeTouches[touch.identifier] === "gear-stick") {
+      delete activeTouches[touch.identifier]
+      isDragging = false
+    }
+  }
 })
 
+// Update the touchmove handler to work with multi-touch
 document.addEventListener("touchmove", (event) => {
-  if (isDragging && event.touches.length > 0) {
-    const touch = event.touches[0]
-    const container = gearStickEl.parentElement
-    const rect = container.getBoundingClientRect()
+  for (let i = 0; i < event.changedTouches.length; i++) {
+    const touch = event.changedTouches[i]
 
-    let x = touch.clientX - rect.left
-    let y = touch.clientY - rect.top
+    // Only process if this touch is for the gear stick
+    if (activeTouches[touch.identifier] === "gear-stick" && isDragging) {
+      const container = gearStickEl.parentElement
+      const rect = container.getBoundingClientRect()
 
-    // Constrain to container
-    x = Math.max(20, Math.min(x, rect.width - 20))
-    y = Math.max(20, Math.min(y, rect.height - 20))
+      let x = touch.clientX - rect.left
+      let y = touch.clientY - rect.top
 
-    // Determine gear based on position
-    let newGear
+      // Constrain to container
+      x = Math.max(20, Math.min(x, rect.width - 20))
+      y = Math.max(20, Math.min(y, rect.height - 20))
 
-    // Neutral zone (center)
-    const centerX = rect.width / 2
-    const centerY = rect.height / 2
-    const neutralRadius = 20
+      // Determine gear based on position
+      let newGear
 
-    if (Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)) < neutralRadius) {
-      newGear = "Neutral"
-    } else if (x < centerX - 10) {
-      newGear = y < centerY ? "1" : "2"
-    } else if (x > centerX + 10) {
-      newGear = y < centerY ? "5" : "Reverse"
-    } else {
-      newGear = y < centerY ? "3" : "4"
-    }
+      // Neutral zone (center)
+      const centerX = rect.width / 2
+      const centerY = rect.height / 2
+      const neutralRadius = 20
 
-    // Check if we can change to this gear
-    if (newGear !== gear) {
-      if (clutchPressed || (gear === "Neutral" && newGear === "Neutral")) {
-        // Snap to the exact position for the gear
-        const pos = gearPositions[newGear]
-        gearStickEl.style.left = `${pos.x}px`
-        gearStickEl.style.top = `${pos.y}px`
-
-        // If shifting from a driving gear to reverse or vice versa
-        if (
-          (gear !== "Neutral" && gear !== "Reverse" && newGear === "Reverse") ||
-          (gear === "Reverse" && newGear !== "Neutral")
-        ) {
-          if (speed > 2) {
-            showMessage("Cannot shift to/from reverse while moving!")
-            moveGearStick("Neutral")
-            return
-          }
-        }
-
-        gear = newGear
-
-        // Check for grinding gears (shifting without clutch at speed)
-        if (!clutchPressed && speed > 5 && gear !== "Neutral") {
-          showMessage("Grinding gears! Use the clutch when shifting")
-          playSound(gearShiftSound)
-        }
-
-        updateDisplay()
+      if (Math.sqrt(Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)) < neutralRadius) {
+        newGear = "Neutral"
+      } else if (x < centerX - 10) {
+        newGear = y < centerY ? "1" : "2"
+      } else if (x > centerX + 10) {
+        newGear = y < centerY ? "5" : "Reverse"
       } else {
-        showMessage("Press the clutch to change gears")
-        // Return to previous position
-        moveGearStick(gear)
+        newGear = y < centerY ? "3" : "4"
+      }
+
+      // Check if we can change to this gear
+      if (newGear !== gear) {
+        if (clutchPressed || (gear === "Neutral" && newGear === "Neutral")) {
+          // Snap to the exact position for the gear
+          const pos = gearPositions[newGear]
+          gearStickEl.style.left = `${pos.x}px`
+          gearStickEl.style.top = `${pos.y}px`
+
+          // If shifting from a driving gear to reverse or vice versa
+          if (
+            (gear !== "Neutral" && gear !== "Reverse" && newGear === "Reverse") ||
+            (gear === "Reverse" && newGear !== "Neutral")
+          ) {
+            if (speed > 2) {
+              showMessage("Cannot shift to/from reverse while moving!")
+              moveGearStick("Neutral")
+              return
+            }
+          }
+
+          gear = newGear
+
+          // Check for grinding gears (shifting without clutch at speed)
+          if (!clutchPressed && speed > 5 && gear !== "Neutral") {
+            showMessage("Grinding gears! Use the clutch when shifting")
+            playSound(gearShiftSound)
+          }
+
+          updateDisplay()
+        } else {
+          showMessage("Press the clutch to change gears")
+          // Return to previous position
+          moveGearStick(gear)
+        }
       }
     }
   }
@@ -834,3 +991,4 @@ updateGearPositions()
 
 // Initial display update
 updateDisplay()
+

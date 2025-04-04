@@ -1,759 +1,660 @@
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background-color: #f5f5f5;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-    transition: transform 0.05s ease-out;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  transition: transform 0.05s ease-out;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 28px;
+  margin-bottom: 15px;
+}
+
+.dashboard {
+  background: #222;
+  color: white;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent);
+  border-radius: 15px 15px 0 0;
+}
+
+.gauges {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.gauge {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  background: #111;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5) inset, 0 0 5px rgba(255, 255, 255, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.gauge-face {
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  background: #1a1a1a;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.gauge-markings {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.gauge-marking {
+  position: absolute;
+  width: 2px;
+  height: 10px;
+  background: white;
+  top: 10px;
+  left: 50%;
+  transform-origin: bottom center;
+}
+
+.gauge-marking.major {
+  height: 15px;
+  width: 3px;
+}
+
+.gauge-value {
+  position: absolute;
+  color: white;
+  font-size: 12px;
+  transform-origin: center;
+  font-weight: bold;
+}
+
+.gauge-needle {
+  position: absolute;
+  width: 4px;
+  height: 80px;
+  background: linear-gradient(to bottom, #ff3b30, #ff3b30 60%, #aaa);
+  bottom: 50%;
+  left: calc(50% - 2px);
+  transform-origin: bottom center;
+  transform: rotate(0deg);
+  transition: transform 0.2s;
+  border-radius: 2px 2px 0 0;
+  z-index: 10;
+}
+
+.gauge-center {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #aaa;
+  border-radius: 50%;
+  top: calc(50% - 10px);
+  left: calc(50% - 10px);
+  z-index: 11;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.gauge-label {
+  position: absolute;
+  bottom: 40px;
+  font-size: 14px;
+  color: #ccc;
+  text-transform: uppercase;
+}
+
+.gauge-value-display {
+  position: absolute;
+  bottom: 60px;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+}
+
+.gauge-unit {
+  position: absolute;
+  bottom: 20px;
+  font-size: 12px;
+  color: #999;
+}
+
+.speedometer .gauge-face {
+  background: radial-gradient(#222, #111);
+}
+
+.tachometer .gauge-face {
+  background: radial-gradient(#222, #111);
+}
+
+.tachometer .gauge-needle {
+  background: linear-gradient(to bottom, #ff3b30, #ff3b30 60%, #aaa);
+}
+
+.status-indicators {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+  background: #1a1a1a;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background: #333;
+  min-width: 80px;
+}
+
+.indicator-label {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 5px;
+}
+
+.indicator-value {
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+}
+
+.indicator.active .indicator-value {
+  color: #2ecc71;
+}
+
+.indicator.warning .indicator-value {
+  color: #e74c3c;
+}
+
+.car-interior {
+  position: relative;
+  background: #222;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  min-height: 400px;
+}
+
+.windshield {
+  height: 150px;
+  background: linear-gradient(to bottom, #87ceeb, #f5f5f5);
+  border-radius: 10px 10px 0 0;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.road {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  background: #555;
+}
+
+.road-line {
+  position: absolute;
+  bottom: 25%;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: white;
+  background-image: linear-gradient(to right, white 50%, transparent 50%);
+  background-size: 40px 100%;
+  animation: roadMove 1s linear infinite paused;
+}
+
+@keyframes roadMove {
+  from {
+    background-position: 0 0;
   }
-  
-  .container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
+  to {
+    background-position: -40px 0;
   }
-  
-  h1 {
-    font-size: 28px;
-    margin-bottom: 15px;
-  }
-  
-  .dashboard {
-    background: #222;
-    color: white;
-    border-radius: 15px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .dashboard::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 30px;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), transparent);
-    border-radius: 15px 15px 0 0;
-  }
-  
+}
+
+.controls-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 200px;
+  position: relative;
+}
+
+.pedals {
+  display: flex;
+  gap: 15px;
+  margin: 0 auto;
+}
+
+.pedal {
+  width: 60px;
+  height: 120px;
+  background: #444;
+  border-radius: 10px 10px 0 0;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.1s;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  border: 2px solid #555;
+  touch-action: manipulation;
+}
+
+.pedal:active,
+.pedal.pressed {
+  transform: translateY(20px);
+}
+
+.pedal-label {
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.pedal-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  color: #ddd;
+}
+
+.dashboard-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.start-button {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s;
+  touch-action: manipulation;
+}
+
+.start-button:hover {
+  background: #c0392b;
+  transform: scale(1.05);
+}
+
+.start-button:active {
+  transform: scale(0.95);
+}
+
+.handbrake {
+  width: 40px;
+  height: 120px;
+  background: #333;
+  border-radius: 10px;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  touch-action: manipulation;
+}
+
+.handbrake-handle {
+  width: 30px;
+  height: 60px;
+  background: #555;
+  border-radius: 5px;
+  position: absolute;
+  top: 10px;
+  left: 5px;
+  transition: transform 0.2s;
+}
+
+.handbrake.engaged .handbrake-handle {
+  transform: translateY(40px);
+}
+
+.handbrake-label {
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: white;
+  font-size: 12px;
+}
+
+.gear-container {
+  width: 120px;
+  height: 180px;
+  margin: 0 auto;
+  border: 2px solid #555;
+  border-radius: 10px;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  background: #333;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  touch-action: manipulation;
+}
+
+.gear-slot {
+  width: 30px;
+  height: 30px;
+  background: #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  border-radius: 5px;
+  margin: 5px;
+  color: white;
+  font-size: 14px;
+}
+
+.gear-stick {
+  width: 20px;
+  height: 20px;
+  background: #777;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  border-radius: 50%;
+  z-index: 10;
+  border: 3px solid #999;
+  touch-action: none;
+}
+
+.gear-stick:active {
+  cursor: grabbing;
+  background: #666;
+}
+
+.neutral-zone {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: rgba(100, 100, 100, 0.3);
+  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+.message {
+  color: #e74c3c;
+  font-weight: bold;
+  height: 20px;
+  margin: 10px 0;
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.settings-panel {
+  background: #333;
+  color: white;
+  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.settings {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px;
+}
+
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 30px;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+  background-color: #2196f3;
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(30px);
+}
+
+.key-hint {
+  display: inline-block;
+  background: #444;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: monospace;
+  margin-left: 5px;
+  color: white;
+}
+
+.mobile-controls {
+  display: none;
+}
+
+@media (max-width: 768px) {
   .gauges {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 20px 0;
-  }
-  
-  .gauge {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    background: #111;
-    border-radius: 50%;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5) inset, 0 0 5px rgba(255, 255, 255, 0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto;
-  }
-  
-  .gauge-face {
-    position: absolute;
-    width: 90%;
-    height: 90%;
-    background: #1a1a1a;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
-  
-  .gauge-markings {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-  }
-  
-  .gauge-marking {
-    position: absolute;
-    width: 2px;
-    height: 10px;
-    background: white;
-    top: 10px;
-    left: 50%;
-    transform-origin: bottom center;
-  }
-  
-  .gauge-marking.major {
-    height: 15px;
-    width: 3px;
-  }
-  
-  .gauge-value {
-    position: absolute;
-    color: white;
-    font-size: 12px;
-    transform-origin: center;
-    font-weight: bold;
-  }
-  
-  .gauge-needle {
-    position: absolute;
-    width: 4px;
-    height: 80px;
-    background: linear-gradient(to bottom, #ff3b30, #ff3b30 60%, #aaa);
-    bottom: 50%;
-    left: calc(50% - 2px);
-    transform-origin: bottom center;
-    transform: rotate(0deg);
-    transition: transform 0.2s;
-    border-radius: 2px 2px 0 0;
-    z-index: 10;
-  }
-  
-  .gauge-center {
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    background: #aaa;
-    border-radius: 50%;
-    top: calc(50% - 10px);
-    left: calc(50% - 10px);
-    z-index: 11;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-  }
-  
-  .gauge-label {
-    position: absolute;
-    bottom: 40px;
-    font-size: 14px;
-    color: #ccc;
-    text-transform: uppercase;
-  }
-  
-  .gauge-value-display {
-    position: absolute;
-    bottom: 60px;
-    font-size: 24px;
-    font-weight: bold;
-    color: white;
-  }
-  
-  .gauge-unit {
-    position: absolute;
-    bottom: 20px;
-    font-size: 12px;
-    color: #999;
-  }
-  
-  .speedometer .gauge-face {
-    background: radial-gradient(#222, #111);
-  }
-  
-  .tachometer .gauge-face {
-    background: radial-gradient(#222, #111);
-  }
-  
-  .tachometer .gauge-needle {
-    background: linear-gradient(to bottom, #ff3b30, #ff3b30 60%, #aaa);
-  }
-  
-  .status-indicators {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
+    flex-direction: row;
     gap: 10px;
-    padding: 10px;
-    background: #1a1a1a;
-    border-radius: 10px;
-    margin-top: 10px;
+    justify-content: center;
   }
-  
-  .indicator {
+
+  .gauge {
+    width: 130px;
+    height: 130px;
+  }
+
+  .gauge-needle {
+    height: 55px;
+  }
+
+  .mobile-controls {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 5px 10px;
-    border-radius: 5px;
-    background: #333;
-    min-width: 80px;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
   }
-  
-  .indicator-label {
-    font-size: 12px;
-    color: #999;
-    margin-bottom: 5px;
-  }
-  
-  .indicator-value {
-    font-size: 14px;
-    font-weight: bold;
-    color: white;
-  }
-  
-  .indicator.active .indicator-value {
-    color: #2ecc71;
-  }
-  
-  .indicator.warning .indicator-value {
-    color: #e74c3c;
-  }
-  
-  .car-interior {
-    position: relative;
-    background: #222;
-    border-radius: 15px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    min-height: 400px;
-  }
-  
-  .windshield {
-    height: 150px;
-    background: linear-gradient(to bottom, #87ceeb, #f5f5f5);
-    border-radius: 10px 10px 0 0;
-    margin-bottom: 20px;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .road {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 50%;
-    background: #555;
-  }
-  
-  .road-line {
-    position: absolute;
-    bottom: 25%;
-    left: 0;
-    width: 100%;
-    height: 5px;
-    background: white;
-    background-image: linear-gradient(to right, white 50%, transparent 50%);
-    background-size: 40px 100%;
-    animation: roadMove 1s linear infinite paused;
-  }
-  
-  @keyframes roadMove {
-    from {
-      background-position: 0 0;
-    }
-    to {
-      background-position: -40px 0;
-    }
-  }
-  
-  .controls-area {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    height: 200px;
-    position: relative;
-  }
-  
-  .pedals {
-    display: flex;
-    gap: 15px;
-    margin: 0 auto;
-  }
-  
-  .pedal {
-    width: 60px;
-    height: 120px;
-    background: #444;
-    border-radius: 10px 10px 0 0;
-    cursor: pointer;
-    position: relative;
-    transition: transform 0.1s;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-    border: 2px solid #555;
-    touch-action: manipulation;
-  }
-  
-  .pedal:active,
-  .pedal.pressed {
-    transform: translateY(20px);
-  }
-  
-  .pedal-label {
-    position: absolute;
-    bottom: 5px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    color: white;
-    font-weight: bold;
-    font-size: 14px;
-  }
-  
-  .pedal-icon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 24px;
-    color: #ddd;
-  }
-  
-  .dashboard-controls {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-  }
-  
-  .start-button {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: #e74c3c;
+
+  .mobile-button {
+    padding: 15px;
+    background: #3498db;
     color: white;
     border: none;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-    transition: all 0.2s;
-    touch-action: manipulation;
-  }
-  
-  .start-button:hover {
-    background: #c0392b;
-    transform: scale(1.05);
-  }
-  
-  .start-button:active {
-    transform: scale(0.95);
-  }
-  
-  .handbrake {
-    width: 40px;
-    height: 120px;
-    background: #333;
     border-radius: 10px;
-    position: relative;
-    cursor: pointer;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-    touch-action: manipulation;
-  }
-  
-  .handbrake-handle {
-    width: 30px;
-    height: 60px;
-    background: #555;
-    border-radius: 5px;
-    position: absolute;
-    top: 10px;
-    left: 5px;
-    transition: transform 0.2s;
-  }
-  
-  .handbrake.engaged .handbrake-handle {
-    transform: translateY(40px);
-  }
-  
-  .handbrake-label {
-    position: absolute;
-    bottom: 5px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    color: white;
-    font-size: 12px;
-  }
-  
-  .gear-container {
-    width: 120px;
-    height: 180px;
-    margin: 0 auto;
-    border: 2px solid #555;
-    border-radius: 10px;
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    background: #333;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-    touch-action: manipulation;
-  }
-  
-  .gear-slot {
-    width: 30px;
-    height: 30px;
-    background: #444;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     font-weight: bold;
-    border-radius: 5px;
-    margin: 5px;
-    color: white;
+    touch-action: manipulation;
+    flex: 1;
+    max-width: 100px;
+  }
+
+  .mobile-button:active {
+    background: #2980b9;
+  }
+}
+
+/* iPhone-specific optimizations */
+@media (max-width: 428px) {
+  .container {
+    padding: 5px;
+  }
+
+  h1 {
+    font-size: 20px;
+    margin: 5px 0;
+  }
+
+  .dashboard,
+  .car-interior,
+  .settings-panel {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+  }
+
+  .gauges {
+    padding: 10px 0;
+  }
+
+  .gauge {
+    width: 110px;
+    height: 110px;
+    margin: 0 5px;
+  }
+
+  .gauge-needle {
+    height: 45px;
+  }
+
+  .gauge-value-display {
+    font-size: 16px;
+    bottom: 35px;
+  }
+
+  .gauge-label {
+    bottom: 22px;
+    font-size: 10px;
+  }
+
+  .gauge-unit {
+    bottom: 10px;
+    font-size: 9px;
+  }
+
+  .gauge-value {
+    font-size: 9px;
+  }
+
+  .gauge-marking.major {
+    height: 10px;
+  }
+
+  .gauge-marking {
+    height: 6px;
+  }
+
+  .status-indicators {
+    padding: 5px;
+    gap: 5px;
+  }
+
+  .indicator {
+    min-width: 65px;
+    padding: 3px 5px;
+  }
+
+  .indicator-label {
+    font-size: 9px;
+  }
+
+  .indicator-value {
+    font-size: 11px;
+  }
+
+  .mobile-controls {
+    margin-top: 10px;
+  }
+
+  .mobile-button {
+    padding: 12px 8px;
     font-size: 14px;
   }
-  
-  .gear-stick {
-    width: 20px;
-    height: 20px;
-    background: #777;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    cursor: grab;
-    border-radius: 50%;
-    z-index: 10;
-    border: 3px solid #999;
-    touch-action: none;
-  }
-  
-  .gear-stick:active {
-    cursor: grabbing;
-    background: #666;
-  }
-  
-  .neutral-zone {
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    background: rgba(100, 100, 100, 0.3);
-    border-radius: 50%;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1;
-  }
-  
-  .message {
-    color: #e74c3c;
-    font-weight: bold;
-    height: 20px;
-    margin: 10px 0;
-    position: absolute;
-    bottom: 10px;
-    left: 0;
-    right: 0;
-    text-align: center;
-  }
-  
-  .settings-panel {
-    background: #333;
-    color: white;
-    border-radius: 15px;
-    padding: 15px;
-    margin-bottom: 20px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  }
-  
-  .settings {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  
-  .toggle-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 10px;
-  }
-  
-  .toggle {
-    position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 30px;
-  }
-  
-  .toggle input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  
-  .toggle-slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-    border-radius: 34px;
-  }
-  
-  .toggle-slider:before {
-    position: absolute;
-    content: "";
-    height: 22px;
-    width: 22px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
-  }
-  
-  input:checked + .toggle-slider {
-    background-color: #2196f3;
-  }
-  
-  input:checked + .toggle-slider:before {
-    transform: translateX(30px);
-  }
-  
-  .key-hint {
-    display: inline-block;
-    background: #444;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-family: monospace;
-    margin-left: 5px;
-    color: white;
-  }
-  
-  .mobile-controls {
-    display: none;
-  }
-  
-  /* Media Queries for Responsive Design */
-  @media (max-width: 768px) {
-    .container {
-      padding: 10px;
-    }
-  
-    h1 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-  
-    .gauges {
-      flex-direction: column;
-      gap: 20px;
-    }
-  
-    .gauge {
-      width: 150px;
-      height: 150px;
-    }
-  
-    .gauge-needle {
-      height: 60px;
-    }
-  
-    .gauge-value-display {
-      font-size: 20px;
-      bottom: 45px;
-    }
-  
-    .gauge-label {
-      bottom: 30px;
-      font-size: 12px;
-    }
-  
-    .gauge-unit {
-      bottom: 15px;
-      font-size: 10px;
-    }
-  
-    .dashboard-controls {
-      justify-content: center;
-      gap: 20px;
-    }
-  
-    .pedals {
-      gap: 10px;
-    }
-  
-    .pedal {
-      width: 50px;
-      height: 100px;
-    }
-  
-    .pedal-label {
-      font-size: 12px;
-    }
-  
-    .mobile-controls {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 20px;
-    }
-  
-    .mobile-button {
-      padding: 15px;
-      background: #3498db;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-weight: bold;
-      touch-action: manipulation;
-    }
-  
-    .mobile-button:active {
-      background: #2980b9;
-    }
-  }
-  
-  /* iPhone-specific optimizations */
-  @media (max-width: 428px) {
-    .container {
-      padding: 5px;
-    }
-  
-    h1 {
-      font-size: 20px;
-      margin: 5px 0;
-    }
-  
-    .dashboard,
-    .car-interior,
-    .settings-panel {
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 10px;
-    }
-  
-    .gauge {
-      width: 130px;
-      height: 130px;
-    }
-  
-    .gauge-needle {
-      height: 50px;
-    }
-  
-    .gauge-value-display {
-      font-size: 18px;
-      bottom: 40px;
-    }
-  
-    .gauge-value {
-      font-size: 10px;
-    }
-  
-    .gauge-marking.major {
-      height: 12px;
-    }
-  
-    .gauge-marking {
-      height: 8px;
-    }
-  
-    .status-indicators {
-      padding: 5px;
-      gap: 5px;
-    }
-  
-    .indicator {
-      min-width: 70px;
-      padding: 3px 5px;
-    }
-  
-    .indicator-label {
-      font-size: 10px;
-    }
-  
-    .indicator-value {
-      font-size: 12px;
-    }
-  
-    .windshield {
-      height: 100px;
-      margin-bottom: 10px;
-    }
-  
-    .start-button {
-      width: 60px;
-      height: 60px;
-      font-size: 12px;
-    }
-  
-    .gear-container {
-      width: 100px;
-      height: 150px;
-    }
-  
-    .gear-slot {
-      width: 25px;
-      height: 25px;
-      font-size: 12px;
-    }
-  
-    .handbrake {
-      width: 30px;
-      height: 100px;
-    }
-  
-    .handbrake-handle {
-      width: 22px;
-      height: 50px;
-    }
-  
-    .handbrake-label {
-      font-size: 10px;
-    }
-  
-    .pedal {
-      width: 40px;
-      height: 80px;
-    }
-  
-    .pedal-icon {
-      font-size: 18px;
-    }
-  
-    .pedal-label {
-      font-size: 10px;
-    }
-  
-    .controls-area {
-      height: 150px;
-    }
-  
-    .mobile-button {
-      padding: 12px;
-      font-size: 14px;
-    }
-  
-    .toggle-container {
-      margin: 5px;
-      gap: 5px;
-    }
-  
-    .toggle {
-      width: 50px;
-      height: 24px;
-    }
-  
-    .toggle-slider:before {
-      height: 18px;
-      width: 18px;
-    }
-  
-    input:checked + .toggle-slider:before {
-      transform: translateX(26px);
-    }
-  
-    .settings h3 {
-      margin: 5px 0;
-      font-size: 16px;
-    }
-  }
-  
-  
+}
+
