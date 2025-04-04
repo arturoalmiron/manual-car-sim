@@ -115,6 +115,7 @@ const unitToggleEl = document.getElementById("unit-toggle")
 const unitLabelEl = document.getElementById("unit-label")
 const speedNeedleEl = document.getElementById("speed-needle")
 const rpmNeedleEl = document.getElementById("rpm-needle")
+const startEngineBtn = document.getElementById("start-engine")
 
 // Indicators
 const engineIndicatorEl = document.getElementById("engine-indicator")
@@ -149,6 +150,9 @@ const gearShiftSound = new Audio()
 gearShiftSound.src =
   "data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tAwAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAAFWgD///////////////////////////////////////////8AAAA8TEFNRTMuMTAwAc0AAAAAAAAAABSAJAJAQgAAgAAAA+gZ4JSQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//sQxAADwAABpAAAACAAADSAAAAETEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVU="
 
+// Add multi-touch support by tracking active touches
+const activeTouches = {}
+
 // Initialize gauge markings
 function initializeGauges() {
   // Clear existing markings first in case this function is called multiple times
@@ -157,15 +161,6 @@ function initializeGauges() {
 
   if (speedMarkings) speedMarkings.innerHTML = ""
   if (rpmMarkings) rpmMarkings.innerHTML = ""
-
-  // Get the actual gauge sizes
-  const speedGauge = document.querySelector(".speedometer")
-  const rpmGauge = document.querySelector(".tachometer")
-
-  if (!speedGauge || !rpmGauge) return
-
-  const speedGaugeSize = speedGauge.offsetWidth
-  const rpmGaugeSize = rpmGauge.offsetWidth
 
   // Create speedometer markings
   for (let i = 0; i <= 12; i++) {
@@ -180,14 +175,15 @@ function initializeGauges() {
       const value = document.createElement("div")
       value.className = "gauge-value"
       value.textContent = i * 10
-      // Position the value
+
+      // Position the value using fixed positions based on the angle
       const angle = ((i * 20 - 120) * Math.PI) / 180
-      const radius = speedGaugeSize * 0.38 // Adjust radius based on gauge size
-      const x = Math.cos(angle) * radius
-      const y = Math.sin(angle) * radius
-      value.style.left = `calc(50% + ${x}px)`
-      value.style.top = `calc(50% + ${y}px)`
-      value.style.transform = `translate(-50%, -50%)`
+      value.style.transform = `rotate(${120 - i * 20}deg) translate(0, -32px) rotate(${i * 20 - 120}deg)`
+      value.style.transformOrigin = "center center"
+      value.style.position = "absolute"
+      value.style.top = "50%"
+      value.style.left = "50%"
+
       speedMarkings.appendChild(value)
     }
   }
@@ -205,14 +201,15 @@ function initializeGauges() {
       const value = document.createElement("div")
       value.className = "gauge-value"
       value.textContent = i
-      // Position the value
+
+      // Position the value using fixed positions based on the angle
       const angle = ((i * 30 - 120) * Math.PI) / 180
-      const radius = rpmGaugeSize * 0.38 // Adjust radius based on gauge size
-      const x = Math.cos(angle) * radius
-      const y = Math.sin(angle) * radius
-      value.style.left = `calc(50% + ${x}px)`
-      value.style.top = `calc(50% + ${y}px)`
-      value.style.transform = `translate(-50%, -50%)`
+      value.style.transform = `rotate(${120 - i * 30}deg) translate(0, -32px) rotate(${i * 30 - 120}deg)`
+      value.style.transformOrigin = "center center"
+      value.style.position = "absolute"
+      value.style.top = "50%"
+      value.style.left = "50%"
+
       rpmMarkings.appendChild(value)
     }
   }
@@ -357,8 +354,8 @@ function moveGearStick(newGear) {
   }
 }
 
-// Start/stop engine
-document.getElementById("start-engine").addEventListener("click", () => {
+// Function to start/stop engine
+function toggleEngine() {
   if (!engineOn) {
     if (clutchPressed) {
       engineOn = true
@@ -376,9 +373,42 @@ document.getElementById("start-engine").addEventListener("click", () => {
     showMessage("Engine stopped")
   }
   updateDisplay()
+}
+
+// Start/stop engine - mouse events
+startEngineBtn.addEventListener("click", toggleEngine)
+
+// Start/stop engine - touch events with multi-touch support
+startEngineBtn.addEventListener("touchstart", (e) => {
+  e.preventDefault()
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const touch = e.changedTouches[i]
+    activeTouches[touch.identifier] = "start-engine"
+  }
+  // Don't toggle engine here, wait for touchend
+  startEngineBtn.classList.add("active")
 })
 
-// Clutch control
+startEngineBtn.addEventListener("touchend", (e) => {
+  e.preventDefault()
+  let wasStartEngineTouch = false
+
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const touch = e.changedTouches[i]
+    if (activeTouches[touch.identifier] === "start-engine") {
+      delete activeTouches[touch.identifier]
+      wasStartEngineTouch = true
+    }
+  }
+
+  if (wasStartEngineTouch) {
+    toggleEngine()
+  }
+
+  startEngineBtn.classList.remove("active")
+})
+
+// Clutch control - mouse events
 clutchEl.addEventListener("mousedown", () => {
   clutchPressed = true
   updateDisplay()
@@ -396,11 +426,7 @@ clutchEl.addEventListener("mouseup", () => {
   updateDisplay()
 })
 
-// Add multi-touch support by tracking active touches
-const activeTouches = {}
-
-// Modify the touch event handlers for pedals to support multi-touch
-// Replace the existing touch event handlers for clutch
+// Clutch control - touch events with multi-touch support
 clutchEl.addEventListener("touchstart", (e) => {
   e.preventDefault()
   for (let i = 0; i < e.changedTouches.length; i++) {
@@ -434,7 +460,18 @@ clutchEl.addEventListener("touchend", (e) => {
   updateDisplay()
 })
 
-// Replace the existing touch event handlers for accelerator
+// Accelerator control - mouse events
+accelerateEl.addEventListener("mousedown", () => {
+  accelerating = true
+  updateDisplay()
+})
+
+accelerateEl.addEventListener("mouseup", () => {
+  accelerating = false
+  updateDisplay()
+})
+
+// Accelerator control - touch events with multi-touch support
 accelerateEl.addEventListener("touchstart", (e) => {
   e.preventDefault()
   for (let i = 0; i < e.changedTouches.length; i++) {
@@ -462,7 +499,18 @@ accelerateEl.addEventListener("touchend", (e) => {
   updateDisplay()
 })
 
-// Replace the existing touch event handlers for brake
+// Brake control - mouse events
+brakeEl.addEventListener("mousedown", () => {
+  braking = true
+  updateDisplay()
+})
+
+brakeEl.addEventListener("mouseup", () => {
+  braking = false
+  updateDisplay()
+})
+
+// Brake control - touch events with multi-touch support
 brakeEl.addEventListener("touchstart", (e) => {
   e.preventDefault()
   for (let i = 0; i < e.changedTouches.length; i++) {
@@ -490,7 +538,47 @@ brakeEl.addEventListener("touchend", (e) => {
   updateDisplay()
 })
 
-// Update mobile button handlers for multi-touch
+// Handbrake control with multi-touch support
+handbrakeEl.addEventListener("mousedown", () => {
+  handbrakeOn = !handbrakeOn
+  if (handbrakeOn && speed > 5) {
+    showMessage("Warning: Engaging handbrake at speed!")
+    speed = Math.max(0, speed - 10) // Rapid deceleration
+  }
+  updateDisplay()
+})
+
+handbrakeEl.addEventListener("touchstart", (e) => {
+  e.preventDefault()
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const touch = e.changedTouches[i]
+    activeTouches[touch.identifier] = "handbrake"
+  }
+})
+
+handbrakeEl.addEventListener("touchend", (e) => {
+  e.preventDefault()
+  let wasHandbrakeTouch = false
+
+  for (let i = 0; i < e.changedTouches.length; i++) {
+    const touch = e.changedTouches[i]
+    if (activeTouches[touch.identifier] === "handbrake") {
+      delete activeTouches[touch.identifier]
+      wasHandbrakeTouch = true
+    }
+  }
+
+  if (wasHandbrakeTouch) {
+    handbrakeOn = !handbrakeOn
+    if (handbrakeOn && speed > 5) {
+      showMessage("Warning: Engaging handbrake at speed!")
+      speed = Math.max(0, speed - 10) // Rapid deceleration
+    }
+    updateDisplay()
+  }
+})
+
+// Mobile controls with multi-touch support
 mobileClutchEl.addEventListener("touchstart", (e) => {
   e.preventDefault()
   for (let i = 0; i < e.changedTouches.length; i++) {
@@ -577,92 +665,6 @@ mobileBrakeEl.addEventListener("touchend", (e) => {
 
   updateDisplay()
 })
-
-// Handbrake control
-handbrakeEl.addEventListener("click", () => {
-  handbrakeOn = !handbrakeOn
-
-  if (handbrakeOn && speed > 5) {
-    showMessage("Warning: Engaging handbrake at speed!")
-    speed = Math.max(0, speed - 10) // Rapid deceleration
-  }
-
-  updateDisplay()
-})
-
-// Accelerator control
-accelerateEl.addEventListener("mousedown", () => {
-  accelerating = true
-  updateDisplay()
-})
-
-accelerateEl.addEventListener("mouseup", () => {
-  accelerating = false
-  updateDisplay()
-})
-
-// Touch events for accelerator
-//accelerateEl.addEventListener("touchstart", (e) => {
-//  e.preventDefault()
-//  accelerating = true
-//  updateDisplay()
-//})
-//
-//accelerateEl.addEventListener("touchend", (e) => {
-//  e.preventDefault()
-//  accelerating = false
-//  updateDisplay()
-//})
-
-// Mobile gas button
-//mobileGasEl.addEventListener("touchstart", (e) => {
-//  e.preventDefault()
-//  accelerating = true
-//  updateDisplay()
-//})
-//
-//mobileGasEl.addEventListener("touchend", (e) => {
-//  e.preventDefault()
-//  accelerating = false
-//  updateDisplay()
-//})
-
-// Brake control
-brakeEl.addEventListener("mousedown", () => {
-  braking = true
-  updateDisplay()
-})
-
-brakeEl.addEventListener("mouseup", () => {
-  braking = false
-  updateDisplay()
-})
-
-// Touch events for brake
-//brakeEl.addEventListener("touchstart", (e) => {
-//  e.preventDefault()
-//  braking = true
-//  updateDisplay()
-//})
-//
-//brakeEl.addEventListener("touchend", (e) => {
-//  e.preventDefault()
-//  braking = false
-//  updateDisplay()
-//})
-
-// Mobile brake button
-//mobileBrakeEl.addEventListener("touchstart", (e) => {
-//  e.preventDefault()
-//  braking = true
-//  updateDisplay()
-//})
-//
-//mobileBrakeEl.addEventListener("touchend", (e) => {
-//  e.preventDefault()
-//  braking = false
-//  updateDisplay()
-//})
 
 // Gear stick drag functionality
 let isDragging = false
@@ -891,22 +893,7 @@ document.addEventListener("keydown", (e) => {
       break
     case "s":
       // Start/stop engine
-      if (!engineOn) {
-        if (clutchPressed) {
-          engineOn = true
-          stalled = false
-          rpm = idleRpm
-          playSound(engineStartSound)
-          showMessage("Engine started")
-        } else {
-          showMessage("Press the clutch to start the engine")
-        }
-      } else {
-        engineOn = false
-        rpm = 0
-        playSound(engineStopSound)
-        showMessage("Engine stopped")
-      }
+      toggleEngine()
       break
   }
   updateDisplay()
@@ -1013,4 +1000,3 @@ updateGearPositions()
 
 // Initial display update
 updateDisplay()
-
